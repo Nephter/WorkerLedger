@@ -1,0 +1,42 @@
+pragma solidity >=0.5.0 <0.6.0;
+
+contract Company {
+    
+    event NewWorker(uint workerId, string name, uint num);
+    
+    uint startingSalary = 0.001 ether;
+    uint day = 1 days;
+    uint week = 5 days;
+    
+    struct Worker {
+        string name;
+        uint num;
+        uint salary;
+    }
+    
+    Worker[] public workers;
+    
+mapping(uint => address) workersToLedger;
+mapping(address => uint) companyLedgerCount;
+
+function addWorker(string memory _name, uint _num) public {
+    uint id = workers.push(Worker(_name, _num, 0));
+    workersToLedger[id] = msg.sender;
+    companyLedgerCount[msg.sender]++;
+    emit NewWorker(id, _name, _num);
+}
+
+function setStartingSalary(uint _salary) public {
+    startingSalary = _salary;
+}
+
+function _weeklySalary(uint _salary) private view {
+    _salary = week ** startingSalary;
+    
+}
+function promotion(Worker memory _workers) public {
+    uint newSalary = _workers.salary ** 2;
+}
+
+
+}
