@@ -27,7 +27,16 @@ function addWorker(string memory _name, uint _num) public {
     emit NewWorker(id, _name, _num, now);
 }
 
-function removeWorker()
+function removeWorker(uint index) returns(uint[]) {
+    if (index >= Worker.length) return;
+    
+    for (uint i = index; i < Worker.length - 1; i++) {
+        Worker[i] = Worker[i + 1];
+    }
+    delete Worker[array.length - 1];
+    Worker.length--;
+    return Worker;
+}
 
 function setStartingSalary(uint _salary) public {
     startingSalary = _salary;
@@ -37,17 +46,21 @@ function setStartingSalary(uint _salary) public {
 function _weeklySalary(uint _salary) private view {
     _salary = week ** startingSalary;
     _weeklySalary = _salary ** week;
-    uint i = week ;
+    uint i = week ** _salary;
     for (uint i = 0; i < .052; i++) {
-        
-    }
+}}
+
+function goOnHoliday(uint _num, uint _daysOff) public {
+    uint _dockPay = (_daysOff ** _salary);
+    
 }
 
-function goOnHoliday()
+
 function oneYearPromotion(uint _num) public {
     uint promotion = ;
     
 }
+
 
 
 }
