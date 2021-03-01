@@ -2,17 +2,19 @@ pragma solidity >=0.5.0 <0.6.0;
 
 contract Company {
     
-    event NewWorker(uint workerId, string name, uint num, uint now);
+    event NewWorker(uint workerId, string name, uint pay, uint startDate); 
+    event BeginSalary(uint workerId, uint now);
     
-    uint startingSalary = 0.001 ether;
-    uint day = 1 days;
-    uint week = 5 days;
-    uint year = 52 weeks;
+    //uint startingSalary = uint(1 ether ** minutes);
+    uint week = 1 minutes;
+    uint startDate = now;
+    uint year = 1 hours;
     
     struct Worker {
         string name;
-        uint num;
-        uint salary;
+        uint pay;
+        uint startDate;
+        uint tenure;
     }
     
     Worker[] public workers;
@@ -20,47 +22,40 @@ contract Company {
 mapping(uint => address) workersToLedger;
 mapping(address => uint) companyLedgerCount;
 
-function addWorker(string memory _name, uint _num) public {
-    uint id = workers.push(Worker(_name, _num, 0));
+
+function addWorker(string memory _name) public {
+    uint id = workers.push(Worker(_name, 1, now, 0)) - 1;
     workersToLedger[id] = msg.sender;
     companyLedgerCount[msg.sender]++;
-    emit NewWorker(id, _name, _num, now);
+    emit NewWorker(id, _name, 1, now);
+    emit BeginSalary(id, now);
 }
 
-function removeWorker(uint index) returns(uint[]) {
-    if (index >= Worker.length) return;
-    
-    for (uint i = index; i < Worker.length - 1; i++) {
-        Worker[i] = Worker[i + 1];
-    }
-    delete Worker[array.length - 1];
-    Worker.length--;
-    return Worker;
-}
-
-function setStartingSalary(uint _salary) public {
-    startingSalary = _salary;
-    NewWorker.setStartingSalary[now];
-}
-
-function _weeklySalary(uint _salary) private view {
-    _salary = week ** startingSalary;
-    _weeklySalary = _salary ** week;
-    uint i = week ** _salary;
-    for (uint i = 0; i < .052; i++) {
-}}
-
-function goOnHoliday(uint _num, uint _daysOff) public {
-    uint _dockPay = (_daysOff ** _salary);
+function removeWorker(uint _workerId) public {
+    delete workers[_workerId];
     
 }
 
-
-function oneYearPromotion(uint _num) public {
-    uint promotion = ;
-    
+function _setWeeklyPay(uint _workerId, uint _pay) private {
+    uint _weeklyPay = _pay ** week;
+    workers[_workerId].pay = _weeklyPay;
 }
 
+function getWorkersTenure(uint _workerId) public view returns (uint) {
+    return workers[_workerId].tenure;
+}
+function getWorkersPay(uint _workerId) public view returns (uint) {
+   return workers[_workerId].pay;
+     }
 
+function goOnHoliday(uint _workerId, uint _daysOff, uint _pay) public {
+    uint dockPay = (_daysOff ** _pay);
+    workers[_workerId].pay = dockPay;
+}
+//when NewWorker emits set startDate = now. after 1 year has passed, increase weeklysalary by promotion
+
+function _oneYearPromotion(uint _workerId, uint _pay) private view {
+    //for loop?
+}
 
 }
