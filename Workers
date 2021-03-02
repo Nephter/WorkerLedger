@@ -1,21 +1,25 @@
-pragma solidity >=0.5.0 <0.6.0;
+pragma solidity ^0.7.4;
 
 contract Company {
     
+    uint time = block.timestamp;
     event NewWorker(uint workerId, string name, uint pay, uint startDate); 
-    event BeginSalary(uint workerId, uint now);
+    event BeginSalary(uint workerId, uint time);
     
     //uint startingSalary = uint(1 ether ** minutes);
     uint week = 1 minutes;
-    uint startDate = now;
+    uint startDate = time;
     uint year = 1 hours;
+    uint tenure = time - startDate;
+    uint pay = week ** 1;
+    
     
     struct Worker {
         string name;
         uint pay;
         uint startDate;
         uint tenure;
-    }
+}
     
     Worker[] public workers;
     
@@ -24,16 +28,16 @@ mapping(address => uint) companyLedgerCount;
 
 
 function addWorker(string memory _name) public {
-    uint id = workers.push(Worker(_name, 1, now, 0)) - 1;
+    workers.push(Worker(_name, 1, time, (time - startDate)));
+    uint id = workers.length - 1;
     workersToLedger[id] = msg.sender;
     companyLedgerCount[msg.sender]++;
-    emit NewWorker(id, _name, 1, now);
-    emit BeginSalary(id, now);
+    emit NewWorker(id, _name, 1, time);
+    emit BeginSalary(id, time);
 }
 
 function removeWorker(uint _workerId) public {
     delete workers[_workerId];
-    
 }
 
 function _setWeeklyPay(uint _workerId, uint _pay) private {
@@ -45,17 +49,24 @@ function getWorkersTenure(uint _workerId) public view returns (uint) {
     return workers[_workerId].tenure;
 }
 function getWorkersPay(uint _workerId) public view returns (uint) {
-   return workers[_workerId].pay;
-     }
+    return workers[_workerId].pay;
+}
 
 function goOnHoliday(uint _workerId, uint _daysOff, uint _pay) public {
     uint dockPay = (_daysOff ** _pay);
     workers[_workerId].pay = dockPay;
 }
-//when NewWorker emits set startDate = now. after 1 year has passed, increase weeklysalary by promotion
-
+//when NewWorker emits set startDate = block.timestamp. after 1 year has passed, increase weeklysalary by promotion
 function _oneYearPromotion(uint _workerId, uint _pay) private view {
-    //for loop?
+    
 }
+
+function increaseTenureOneYear(uint _workerId) public {
+    workers[_workerId].tenure = workers[_workerId].tenure + year;
+}
+
+
+
+
 
 }
