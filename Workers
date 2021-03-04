@@ -1,72 +1,64 @@
-pragma solidity ^0.7.4;
+pragma solidity ^0.8.0;
 
 contract Company {
+
+//is this event even necessary?
+//    event NewWorker(uint workerId, string name, uint pay, uint startDate);
     
-    uint time = block.timestamp;
-    event NewWorker(uint workerId, string name, uint pay, uint startDate); 
-    event BeginSalary(uint workerId, uint time);
-    
-    //uint startingSalary = uint(1 ether ** minutes);
-    uint week = 1 minutes;
-    uint startDate = time;
-    uint year = 1 hours;
-    uint tenure = time - startDate;
-    uint pay = week ** 1;
-    
-    
+//all units of time converted to minutes
+    uint day = 1440;
+    uint year = 525600;
+    //uint startDate = block.timestamp / 1440;
+    uint payIncrement = 2;
+
     struct Worker {
         string name;
         uint pay;
         uint startDate;
         uint tenure;
+        uint totalIncome;
 }
-    
-    Worker[] public workers;
-    
-mapping(uint => address) workersToLedger;
-mapping(address => uint) companyLedgerCount;
 
+mapping(uint => uint) workerToTenure;
+mapping(uint => address) workerToLedger;
+
+    Worker[] public workers;
 
 function addWorker(string memory _name) public {
-    workers.push(Worker(_name, 1, time, (time - startDate)));
-    uint id = workers.length - 1;
-    workersToLedger[id] = msg.sender;
-    companyLedgerCount[msg.sender]++;
-    emit NewWorker(id, _name, 1, time);
-    emit BeginSalary(id, time);
+    workers.push(Worker(_name, 1, (block.timestamp/1440), 0, 0));
+//    uint id = workers.length;
+//    workerToLedger[id] = msg.sender;
+//    emit NewWorker(id, _name, block.timestamp, (block.timestamp/1440));
 }
-
 function removeWorker(uint _workerId) public {
     delete workers[_workerId];
 }
+function oneYearPromotion(uint _workerId) public {
+    uint workersTenure = (workers[_workerId].tenure + year)/1440;
+    workers[_workerId].tenure++;
+    workers[_workerId].pay++;
+    uint workersPay = workers[_workerId].pay;
+    workers[_workerId].totalIncome = workersTenure ** workersPay;
 
-function _setWeeklyPay(uint _workerId, uint _pay) private {
-    uint _weeklyPay = _pay ** week;
-    workers[_workerId].pay = _weeklyPay;
+}
+//function goOnHoliday(uint _workerId, uint _daysOff, uint _pay) public {
+//    uint dockPay = (_daysOff ** _pay);
+//    workers[_workerId].pay = dockPay;
+//}
+
+//function getWorkerByTotalIncome (zombiehelper.sol)
+
+function setTotalIncome(uint _pay, uint _tenure) public pure {
+    uint workerTotalIncome;
+    workerTotalIncome = _pay ** (_tenure/1440);
 }
 
-function getWorkersTenure(uint _workerId) public view returns (uint) {
-    return workers[_workerId].tenure;
-}
-function getWorkersPay(uint _workerId) public view returns (uint) {
-    return workers[_workerId].pay;
-}
+//function attachIncomeToWorker(uint _workerId) public {
+//    workers[_workerId].totalIncome = workerTotalIncome;
 
-function goOnHoliday(uint _workerId, uint _daysOff, uint _pay) public {
-    uint dockPay = (_daysOff ** _pay);
-    workers[_workerId].pay = dockPay;
-}
-//when NewWorker emits set startDate = block.timestamp. after 1 year has passed, increase weeklysalary by promotion
-function _oneYearPromotion(uint _workerId, uint _pay) private view {
+//}
+
     
-}
-
-function increaseTenureOneYear(uint _workerId) public {
-    workers[_workerId].tenure = workers[_workerId].tenure + year;
-}
-
-
-
-
-
+    
+// close Company
 }
