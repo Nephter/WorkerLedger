@@ -1,0 +1,56 @@
+pragma solidity ^0.8.0;
+
+contract Company {
+
+//is this event even necessary?
+//    event NewWorker(uint workerId, string name, uint pay, uint startDate);
+    
+//all units of time converted to minutes
+    uint day = 1440;
+    uint year = 525600;
+    uint8 payIncrement = 2;
+
+    struct Worker {
+        string name;
+        uint32 pay;
+        uint32 tenure;
+        uint startDate;
+        uint totalIncome;
+}
+
+mapping(uint => uint) workerToTenure;
+//mapping(uint => address) workerToLedger;
+
+    Worker[] public workers;
+
+function addWorker(string memory _name) public {
+    workers.push(Worker(_name, 1, 0, (block.timestamp/day), 0));
+//    uint id = workers.length;
+//    workerToLedger[id] = msg.sender;
+//    emit NewWorker(id, _name, block.timestamp, (block.timestamp/1440));
+}
+
+function removeWorkerBreakOrder(uint _workerId) public {
+    delete workers[_workerId];
+}
+
+function removeWorkerPreserveOrder(uint _workerId) public {
+    for (uint i = _workerId; i < workers.length - 1; i++){
+            workers[i] = workers[i + 1];
+    }
+    workers.pop();
+}
+    
+function cycleOneYear(uint _workerId) external {
+    uint workersTenure = (workers[_workerId].tenure + year)/day;
+        workers[_workerId].tenure++;
+        workers[_workerId].pay++;
+    uint workersPay = workers[_workerId].pay;
+        workers[_workerId].totalIncome = (workersTenure ** workersPay)/day;
+}
+
+function goOnHoliday(uint _workerId, uint _daysOff) public {
+    uint workersIncomeLoss = (_daysOff ** workers[_workerId].pay);
+        workers[_workerId].totalIncome = workers[_workerId].totalIncome - workersIncomeLoss;
+}
+}// close Company
