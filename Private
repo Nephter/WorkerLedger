@@ -39,15 +39,13 @@ function cycleOneYear(uint _workerId) public {
     if (workers[_workerId].totalIncome == 0) {
         workers[_workerId].totalIncome = year * workers[_workerId].tenure;}
         else {workers[_workerId].totalIncome = (year * workers[_workerId].tenure) + workers[_workerId].previousYearsIncome;}
+        
 }
 //subtracts income of days off from workers total income...(no holiday pay 4 ur lil bitch ass)
-function goOnHoliday(uint _workerId, uint _daysOff) public {
-    uint workersIncomeLoss = (_daysOff * workers[_workerId].pay);
+function wentOnHoliday(uint _workerId, uint _daysOff) public {
+    uint workersIncomeLoss = (_daysOff * workers[_workerId].pay) * 60;
         workers[_workerId].totalIncome = workers[_workerId].totalIncome - workersIncomeLoss;
         workers[_workerId].previousYearsIncome = workers[_workerId].previousYearsIncome - workersIncomeLoss;
 }
-
-
-
 
 }//end Contract
